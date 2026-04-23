@@ -151,6 +151,34 @@
     </div>
   </div>
 
+  <!-- Failed jobs table -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-x-circle-fill text-danger me-2"></i>Failed Backup Jobs</span>
+      <span class="badge bg-secondary" id="job-count">0</span>
+    </div>
+    <div class="card-body p-0">
+      <div id="job-spinner" class="spinner-wrap">
+        <div class="spinner-border text-primary"></div>
+      </div>
+      <div id="job-table-wrap" class="d-none table-responsive">
+        <table class="table table-hover mb-0" id="job-table">
+          <thead class="table-light">
+            <tr>
+              <th>Status</th>
+              <th>Organization</th>
+              <th>Job Name</th>
+              <th>Last Run</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="job-tbody"></tbody>
+        </table>
+        <div id="job-no-results" class="text-center text-muted py-4 d-none">No failed jobs.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Organizations table -->
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white">
@@ -300,6 +328,34 @@ function populateOrgFilter(orgs) {
   });
 }
 
+function jobStatusBadge(status) {
+  const cls = status === 'Failed' ? 'badge-error' : 'badge-warning';
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function renderJobs(jobs) {
+  document.getElementById('job-count').textContent = jobs.length;
+  const tbody = document.getElementById('job-tbody');
+  tbody.innerHTML = '';
+  document.getElementById('job-no-results').classList.toggle('d-none', jobs.length > 0);
+
+  jobs.sort((a, b) => (b.lastRun ?? '').localeCompare(a.lastRun ?? ''));
+  jobs.forEach(j => {
+    const org = orgMap[j.mappedOrganizationUid] ?? orgMap[j.organizationUid];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${jobStatusBadge(j.status)}</td>
+      <td>${org ? `<span class="badge bg-light text-dark border org-badge">${escHtml(org.name)}</span>` : '<span class="text-muted">–</span>'}</td>
+      <td>${escHtml(j.name ?? '–')}</td>
+      <td class="text-nowrap">${fmtTime(j.lastRun)}</td>
+      <td><div class="alarm-msg">${escHtml(j.failureMessage ?? '–')}</div></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('job-spinner').classList.add('d-none');
+  document.getElementById('job-table-wrap').classList.remove('d-none');
+}
+
 function renderOrgs(orgs, alarms) {
   const alarmsByOrg = {};
   alarms.forEach(a => {
@@ -334,6 +390,8 @@ async function loadData() {
   document.getElementById('alarm-spinner').classList.remove('d-none');
   document.getElementById('alarm-table-wrap').classList.add('d-none');
   document.getElementById('alarm-error').classList.add('d-none');
+  document.getElementById('job-spinner').classList.remove('d-none');
+  document.getElementById('job-table-wrap').classList.add('d-none');
   document.getElementById('org-spinner').classList.remove('d-none');
   document.getElementById('org-table-wrap').classList.add('d-none');
 
@@ -346,6 +404,7 @@ async function loadData() {
       errEl.textContent = 'Error: ' + json.error;
       errEl.classList.remove('d-none');
       document.getElementById('alarm-spinner').classList.add('d-none');
+      document.getElementById('job-spinner').classList.add('d-none');
       document.getElementById('org-spinner').classList.add('d-none');
       return;
     }
@@ -366,6 +425,7 @@ async function loadData() {
     document.getElementById('cnt-orgs').textContent    = orgs.length;
 
     populateOrgFilter(orgs);
+    renderJobs(json.failed_jobs ?? []);
     renderOrgs(orgs, allAlarms);
     applyFilters();
 
@@ -380,6 +440,7 @@ async function loadData() {
     errEl.textContent = 'Network error: ' + err.message;
     errEl.classList.remove('d-none');
     document.getElementById('alarm-spinner').classList.add('d-none');
+    document.getElementById('job-spinner').classList.add('d-none');
     document.getElementById('org-spinner').classList.add('d-none');
   }
 }

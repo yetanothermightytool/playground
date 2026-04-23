@@ -65,7 +65,14 @@ def api_data():
         alarms = fetch_all(token, "/alarms/active")
         organizations = fetch_all(token, "/organizations")
         org_map = {o["instanceUid"]: o for o in organizations}
-        return jsonify({"alarms": alarms, "organizations": organizations, "org_map": org_map})
+        all_jobs = fetch_all(token, "/infrastructure/backupServers/jobs")
+        failed_jobs = [j for j in all_jobs if j.get("status") in ("Failed", "Warning")]
+        return jsonify({
+            "alarms": alarms,
+            "organizations": organizations,
+            "org_map": org_map,
+            "failed_jobs": failed_jobs,
+        })
     except requests.HTTPError as e:
         return jsonify({"error": f"HTTP {e.response.status_code}: {e.response.text}"}), 502
     except Exception as e:
