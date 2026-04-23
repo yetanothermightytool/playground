@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,7 +44,7 @@
   <div class="d-flex align-items-center gap-3">
     <span class="last-updated text-white-50" id="last-updated"></span>
     <button class="btn btn-outline-light btn-sm" onclick="loadData()">
-      <i class="bi bi-arrow-clockwise me-1"></i>Aktualisieren
+      <i class="bi bi-arrow-clockwise me-1"></i>Refresh
     </button>
   </div>
 </nav>
@@ -57,7 +57,7 @@
       <div class="card stat-card border-0 shadow-sm text-center py-3">
         <div class="card-body">
           <div class="fs-1 fw-bold text-danger" id="cnt-error">–</div>
-          <div class="text-muted small">Fehler</div>
+          <div class="text-muted small">Errors</div>
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@
       <div class="card stat-card border-0 shadow-sm text-center py-3">
         <div class="card-body">
           <div class="fs-1 fw-bold text-warning" id="cnt-warning">–</div>
-          <div class="text-muted small">Warnungen</div>
+          <div class="text-muted small">Warnings</div>
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
       <div class="card stat-card border-0 shadow-sm text-center py-3">
         <div class="card-body">
           <div class="fs-1 fw-bold text-success" id="cnt-resolved">–</div>
-          <div class="text-muted small">Behoben</div>
+          <div class="text-muted small">Resolved</div>
         </div>
       </div>
     </div>
@@ -81,7 +81,7 @@
       <div class="card stat-card border-0 shadow-sm text-center py-3">
         <div class="card-body">
           <div class="fs-1 fw-bold text-secondary" id="cnt-orgs">–</div>
-          <div class="text-muted small">Organisationen</div>
+          <div class="text-muted small">Organizations</div>
         </div>
       </div>
     </div>
@@ -93,25 +93,25 @@
       <div class="row g-2 align-items-center">
         <div class="col-md-4">
           <input type="text" class="form-control form-control-sm" id="search-input"
-                 placeholder="Suche (Name, Objekt, Meldung…)" oninput="applyFilters()" />
+                 placeholder="Search (name, object, message…)" oninput="applyFilters()" />
         </div>
         <div class="col-md-2">
           <select class="form-select form-select-sm" id="filter-status" onchange="applyFilters()">
-            <option value="">Alle Status</option>
-            <option value="Error">Fehler</option>
-            <option value="Warning">Warnung</option>
-            <option value="Resolved">Behoben</option>
+            <option value="">All Status</option>
+            <option value="Error">Error</option>
+            <option value="Warning">Warning</option>
+            <option value="Resolved">Resolved</option>
             <option value="Info">Info</option>
           </select>
         </div>
         <div class="col-md-3">
           <select class="form-select form-select-sm" id="filter-org" onchange="applyFilters()">
-            <option value="">Alle Organisationen</option>
+            <option value="">All Organizations</option>
           </select>
         </div>
         <div class="col-md-3">
           <select class="form-select form-select-sm" id="filter-area" onchange="applyFilters()">
-            <option value="">Alle Bereiche</option>
+            <option value="">All Areas</option>
             <option value="vspc">VSPC</option>
             <option value="vone">VOne</option>
           </select>
@@ -123,7 +123,7 @@
   <!-- Alarms table -->
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-      <span><i class="bi bi-bell-fill text-danger me-2"></i>Aktive Alarme</span>
+      <span><i class="bi bi-bell-fill text-danger me-2"></i>Active Alarms</span>
       <span class="badge bg-secondary" id="alarm-count">0</span>
     </div>
     <div class="card-body p-0">
@@ -136,17 +136,17 @@
           <thead class="table-light">
             <tr>
               <th data-col="status" onclick="sortBy('status')">Status <i class="bi bi-sort-up"></i></th>
-              <th data-col="time"   onclick="sortBy('time')">Zeit <i class="bi"></i></th>
-              <th data-col="org"    onclick="sortBy('org')">Organisation <i class="bi"></i></th>
-              <th data-col="object" onclick="sortBy('object')">Objekt <i class="bi"></i></th>
-              <th>Bereich</th>
-              <th data-col="repeat" onclick="sortBy('repeat')">Wdh. <i class="bi"></i></th>
-              <th>Meldung</th>
+              <th data-col="time"   onclick="sortBy('time')">Time <i class="bi"></i></th>
+              <th data-col="org"    onclick="sortBy('org')">Organization <i class="bi"></i></th>
+              <th data-col="object" onclick="sortBy('object')">Object <i class="bi"></i></th>
+              <th>Area</th>
+              <th data-col="repeat" onclick="sortBy('repeat')">Rep. <i class="bi"></i></th>
+              <th>Message</th>
             </tr>
           </thead>
           <tbody id="alarm-tbody"></tbody>
         </table>
-        <div id="no-results" class="text-center text-muted py-4 d-none">Keine Alarme gefunden.</div>
+        <div id="no-results" class="text-center text-muted py-4 d-none">No alarms found.</div>
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@
   <!-- Organizations table -->
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white">
-      <i class="bi bi-building me-2 text-primary"></i>Organisationen
+      <i class="bi bi-building me-2 text-primary"></i>Organizations
     </div>
     <div class="card-body p-0">
       <div id="org-spinner" class="spinner-wrap">
@@ -165,11 +165,11 @@
           <thead class="table-light">
             <tr>
               <th>Name</th>
-              <th>Typ</th>
+              <th>Type</th>
               <th>E-Mail</th>
-              <th>Stadt</th>
-              <th>Land</th>
-              <th>Aktive Alarme</th>
+              <th>City</th>
+              <th>Country</th>
+              <th>Active Alarms</th>
             </tr>
           </thead>
           <tbody id="org-tbody"></tbody>
@@ -207,7 +207,7 @@ function statusBadge(status) {
 function fmtTime(iso) {
   if (!iso) return '–';
   try {
-    return new Date(iso).toLocaleString('de-CH', {dateStyle:'short', timeStyle:'medium'});
+    return new Date(iso).toLocaleString('en-GB', {dateStyle:'short', timeStyle:'medium'});
   } catch { return iso; }
 }
 
@@ -343,7 +343,7 @@ async function loadData() {
 
     if (json.error) {
       const errEl = document.getElementById('alarm-error');
-      errEl.textContent = 'Fehler: ' + json.error;
+      errEl.textContent = 'Error: ' + json.error;
       errEl.classList.remove('d-none');
       document.getElementById('alarm-spinner').classList.add('d-none');
       document.getElementById('org-spinner').classList.add('d-none');
@@ -372,12 +372,12 @@ async function loadData() {
     document.getElementById('alarm-spinner').classList.add('d-none');
     document.getElementById('alarm-table-wrap').classList.remove('d-none');
 
-    const now = new Date().toLocaleString('de-CH', {dateStyle:'short', timeStyle:'medium'});
-    document.getElementById('last-updated').textContent = 'Stand: ' + now;
+    const now = new Date().toLocaleString('en-GB', {dateStyle:'short', timeStyle:'medium'});
+    document.getElementById('last-updated').textContent = 'Updated: ' + now;
 
   } catch (err) {
     const errEl = document.getElementById('alarm-error');
-    errEl.textContent = 'Netzwerkfehler: ' + err.message;
+    errEl.textContent = 'Network error: ' + err.message;
     errEl.classList.remove('d-none');
     document.getElementById('alarm-spinner').classList.add('d-none');
     document.getElementById('org-spinner').classList.add('d-none');
